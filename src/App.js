@@ -1,51 +1,61 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Header = (props) => {
+const Button = (props) => (<button onClick={props.clickHandler}>{props.text}</button>)
+
+const ShowMostUpvotedAnegdote = (props) => {
   return (
-  <h1>{props.heading1}</h1>
-  )
-}
-
-const Part = (props) => {
-  return (
-    <p>
-      {props.part} {props.exercise}
-    </p>
-  )
-}
-
-
-const Content = (props) => {
-  return (
-    <>
-      <Part part={props.part1} exercise={props.exercise1} />
-      <Part part={props.part2} exercise={props.exercise2} />
-      <Part part={props.part3} exercise={props.exercise3} />
-    </>
-  )
-}
-
-const Total = (props) => {
-  return(
-    <p>Number of exercises {props.ex1 + props.ex2 + props.ex3}</p>
+    <div>
+      <h2>Most upovted anegdote</h2>
+      <p>{props.data[props.idx]}</p>
+    </div>
   )
 }
 
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const part1 = 'Fundamentals of React'
-  const exercises1 = 10
-  const part2 = 'Using props to pass data'
-  const exercises2 = 7
-  const part3 = 'State of a component'
-  const exercises3 = 14
+  const anecdotes = [
+    'If it hurts, do it more often',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when dianosing patients'
+  ]
+   
+  const [selected, setSelected] = useState(0)
+  const [points, setPoints] = useState({0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0})
+
+  const drawRandom = () => {
+    let rand = Math.floor(Math.random() * 6)
+    setSelected(rand)
+  }
+
+  const updatePoints = () => {
+    const newPoints = {...points, [selected]:points.[selected] + 1}
+    setPoints(newPoints)
+  }
+
+  console.log(selected, points)
+
+  //find the index of most upvoted anegdote (need refactoring)
+  const mostUpvotedAnegdote = (props) => {
+    let indexOfMostUpvoted = 0
+    for(let i = 0; i < anecdotes.length ;i++) {
+      if (points[indexOfMostUpvoted] < points[i]) {
+        indexOfMostUpvoted = i
+      }
+    }
+    return indexOfMostUpvoted
+  }
 
   return (
     <div>
-      <Header heading1 = {course} />
-      <Content part1 = {part1} exercise1 = {exercises1} part2 = {part2} exercise2 = {exercises2} part3 = {part3} exercise3 = {exercises3}/>
-      <Total ex1 = {exercises1} ex2 = {exercises2} ex3 = {exercises3} /> 
+      {anecdotes[selected]} 
+      <br></br>
+      <Button clickHandler={() => drawRandom()} text={'Draw random anegdote'}/> 
+      <Button clickHandler={() => updatePoints()} text={`Anegdote has currently ${points.[selected]} upvotes`}/> 
+      <ShowMostUpvotedAnegdote data={anecdotes} idx={mostUpvotedAnegdote()}/>
     </div>
   )
 }
