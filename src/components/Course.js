@@ -1,5 +1,5 @@
 import React from 'react'
-
+//x
 const Part = ({name, numOfExc}) => {
 	console.log('name :>> ', name);
 	console.log('numOfExc :>> ', numOfExc);
