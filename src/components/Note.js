@@ -1,8 +1,8 @@
 import React from 'react'
 
-const Note = ({ note }) => {
+const Note = ({ country }) => {
   return (
-    <li key={note.id}>{note.content}</li>
+    <li>{country.name}</li>
   )
 }
 
