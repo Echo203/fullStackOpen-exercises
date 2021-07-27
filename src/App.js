@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Note from './components/Note'
+import CountryList from './components/CountryList'
 import Country from './components/Country'
 
 const App = (props) => {
@@ -24,13 +24,11 @@ const App = (props) => {
 
   // Save searchbar content
   const handleCountrySearch= (event) => {
-
     let tempCountries = countries.filter(country => {
       return country.name.toLowerCase().includes(event.target.value.toLowerCase())
     })
-    
+    // Update shown country list
     setCountriesToShow(tempCountries)
-    console.log('countriesToShow :>> ', countriesToShow);
   }
 
   return (
@@ -39,18 +37,10 @@ const App = (props) => {
       <form>
         <input onChange={handleCountrySearch}/>
       </form> 
-      <ul>
-        { countriesToShow.length > 9
-          ? "Too mane results mate"
-          :  countriesToShow.map(country => <Note key={country.numericCode} country={country} />
-        )}
-      </ul>
-      <div>
-        { countriesToShow.length ===   1
-        ? <Country country={countriesToShow[0]}/>
-        : <div></div>
-        }
-      </div>
+      {countriesToShow.length === 1
+        ? <Country country={countriesToShow[0]} />
+        : <CountryList countryList={countriesToShow}/>
+      }
     </div>
   )
 }
