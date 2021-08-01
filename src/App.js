@@ -46,6 +46,10 @@ const App = () => {
       .then(updatedNote => {
         setNotes(notes.map(n => n.id === id ? updatedNote : n))
       })
+      .catch(err => {
+        alert(`The note ${note.content} has alrdy been deleted`)
+        setNotes(notes.filter(n => n.id !== id))
+      })
   };
 
   const handleNoteChange = (event) => {
