@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import SearchField from "./components/SearchField";
 import numberService from "./components/numberService";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchField, setSearchField] = useState("");
+  const [eventMessage, setEventMessage] = useState([null, ''])
 
   //Fetch numbers list
   const fetchNumbers = () => {
@@ -16,7 +18,7 @@ const App = () => {
   };
   useEffect(fetchNumbers, []);
 
-  // Collect new Name
+  // Add new name to the book
   const addNewName = (event) => {
     event.preventDefault();
     // Check if its already in our list
@@ -30,7 +32,11 @@ const App = () => {
           .then(x => {
             setNewName("");
             setNewNumber("");
-            fetchNumbers()
+            fetchNumbers();
+            setEventMessage(["pos", `${x.name}'s number changed succesfully!`])
+            setTimeout(() => {
+            setEventMessage([null, ''])
+          }, 3000)
           })
       }
     } else {
@@ -46,6 +52,10 @@ const App = () => {
           setPersons(persons.concat([newPerson]));
           setNewName("");
           setNewNumber("");
+          setEventMessage(["pos", `${n.name}'s number added succesfully!`])
+          setTimeout(() => {
+            setEventMessage([null, ''])
+          }, 3000)
       });
     }
   };
@@ -67,15 +77,23 @@ const App = () => {
 
   //Delete button functionality
   const handleDeletingNumber = (id) => {
-    numberService.removeNumber(id).then((res) => {
+    numberService.removeNumber(id)
+    .then((res) => {
       console.log("res :>> ", res);
       fetchNumbers(); // Fetch numbers, no manual updating localy!
-    });
+    })
+    .catch(err => {
+      setEventMessage(["neg", `Failed at deleting number.`])
+      setTimeout(() => {
+        setEventMessage([null, ''])
+      }, 3000)
+    })
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={eventMessage}/>
       <div>
         Search bar:
         <input type="text" onChange={storeSearchField} />
