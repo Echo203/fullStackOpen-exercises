@@ -8,7 +8,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchField, setSearchField] = useState("");
-  const [eventMessage, setEventMessage] = useState([null, ''])
+  const [eventMessage, setEventMessage] = useState([null, ""]);
 
   //Fetch numbers list
   const fetchNumbers = () => {
@@ -22,41 +22,45 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
     // Check if its already in our list
-    const x = persons.find((x) => x.name === newName)
+    const x = persons.find((x) => x.name === newName);
     if (x) {
       //If it is, ask if want to update the number
-      const newPerson = {...x, number: newNumber}
+      const newPerson = { ...x, number: newNumber };
       if (window.confirm(`Do you want to update ${x.name}'s number?`)) {
-        numberService
-          .update(x.id, newPerson)
-          .then(x => {
-            setNewName("");
-            setNewNumber("");
-            fetchNumbers();
-            setEventMessage(["pos", `${x.name}'s number changed succesfully!`])
-            setTimeout(() => {
-            setEventMessage([null, ''])
-          }, 3000)
-          })
+        numberService.update(x.id, newPerson).then((x) => {
+          setNewName("");
+          setNewNumber("");
+          fetchNumbers();
+          setEventMessage(["pos", `${x.name}'s number changed succesfully!`]);
+          setTimeout(() => {
+            setEventMessage([null, ""]);
+          }, 3000);
+        });
       }
     } else {
-      //If its not, create a new person 
+      //If its not, create a new person
       const newPerson = {
-          name: newName,
-          number: newNumber,
-          id: persons.length +1,
-        }
+        name: newName,
+        number: newNumber,
+        id: persons.length + 1,
+      };
       numberService
         .createNewNumber(newPerson)
         .then((n) => {
           setPersons(persons.concat([newPerson]));
           setNewName("");
           setNewNumber("");
-          setEventMessage(["pos", `${n.name}'s number added succesfully!`])
+          setEventMessage(["pos", `${n.name}'s number added succesfully!`]);
           setTimeout(() => {
-            setEventMessage([null, ''])
-          }, 3000)
-      });
+            setEventMessage([null, ""]);
+          }, 3000);
+        })
+        .catch((err) => {
+          setEventMessage(["neg", err.message]);
+          setTimeout(() => {
+            setEventMessage([null, ""]);
+          }, 3000);
+        });
     }
   };
 
@@ -77,23 +81,24 @@ const App = () => {
 
   //Delete button functionality
   const handleDeletingNumber = (id) => {
-    numberService.removeNumber(id)
-    .then((res) => {
-      console.log("res :>> ", res);
-      fetchNumbers(); // Fetch numbers, no manual updating localy!
-    })
-    .catch(err => {
-      setEventMessage(["neg", `Failed at deleting number.`])
-      setTimeout(() => {
-        setEventMessage([null, ''])
-      }, 3000)
-    })
+    numberService
+      .removeNumber(id)
+      .then((res) => {
+        console.log("res :>> ", res);
+        fetchNumbers(); // Fetch numbers, no manual updating localy!
+      })
+      .catch((err) => {
+        setEventMessage(["neg", `Failed at deleting number.`]);
+        setTimeout(() => {
+          setEventMessage([null, ""]);
+        }, 3000);
+      });
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={eventMessage}/>
+      <Notification message={eventMessage} />
       <div>
         Search bar:
         <input type="text" onChange={storeSearchField} />
